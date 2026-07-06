@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mario Brothers Group Site</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      background: #333;
+      color: #fff;
+      padding: 20px;
+      margin: 0;
+      font-size: 2em;
+    }
+    .section {
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background: #fff;
+      width: 60%;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Heading -->
+  <h1>WELCOME TO MARIO BROTHERS</h1>
+
+  <!-- Join Form Section -->
+  <div class="section" id="join-form">
+    <h2>Join Form</h2>
+    <!-- ✅ Your new Google Form responder link -->
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeF_OzGYIG5oRTMMdLHkA1r_ErD-n-nf-FbdH9hnQc92mgqbA/viewform?usp=publish-editor"></iframe>
+  </div>
+
+  <!-- PIN Section -->
+  <div class="section" id="pin-section">
+    <h2>Enter PIN to Access</h2>
+    <input type="password" id="pin-input" placeholder="Enter PIN">
+    <button id="submit-pin">Submit</button>
+    <p id="pin-message"></p>
+  </div>
+
+  <!-- Notice Board Section (hidden initially) -->
+  <div class="section hidden" id="notice-board">
+    <h2>Group Notice Board</h2>
+    <p><strong>Admin Notice 1:</strong> Welcome new members! 🎉</p>
+    <p><strong>Admin Notice 2:</strong> First group meetup on Saturday!</p>
+    <p><strong>Admin Notice 3:</strong> Don’t forget to bring your ideas.</p>
+    <br>
+    <button onclick="throwOutMember()">Throw Out Member</button>
+  </div>
+
+  <script>
+    // All valid PINs
+    let validPins = [
+      "TECHNOLOGIA",
+      "AURA COMES BACK",
+      "spiderman",
+      "THIS IS THE END",
+      "RADHE RADHE",
+      "LOL",
+      "DHURANDHAR"
+    ];
+
+    // Attach event listener to button
+    document.getElementById("submit-pin").addEventListener("click", checkPin);
+
+    function checkPin() {
+      const pin = document.getElementById("pin-input").value.trim();
+      const message = document.getElementById("pin-message");
+
+      if (validPins.includes(pin)) {
+        message.textContent = "Access granted!";
+        document.getElementById("join-form").classList.add("hidden");
+        document.getElementById("pin-section").classList.add("hidden");
+        document.getElementById("notice-board").classList.remove("hidden");
+      } else {
+        message.textContent = "Incorrect PIN. Try again.";
+      }
+    }
+
+    function throwOutMember() {
+      const adminPin = prompt("Enter ADMIN PIN to throw out a member:");
+      if (!adminPin) return;
+
+      if (validPins.includes(adminPin)) {
+        const memberPin = prompt("Enter the PIN of the member you want to throw out:");
+        if (!memberPin) return;
+
+        if (validPins.includes(memberPin)) {
+          validPins = validPins.filter(p => p !== memberPin);
+          alert("Member with PIN '" + memberPin + "' has been thrown out! 🚪");
+        } else {
+          alert("Invalid member PIN. Cannot throw out.");
+        }
+      } else {
+        alert("Invalid ADMIN PIN. Access denied.");
+      }
+    }
+  </script>
+</body>
+</html>
