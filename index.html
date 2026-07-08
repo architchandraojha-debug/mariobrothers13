@@ -76,8 +76,11 @@
   </div>
 
   <script>
-    // All valid PINs
-    let validPins = [
+    // Admin PIN
+    const adminPin = "SUPERADMIN1234";
+
+    // Member PINs
+    let memberPins = [
       "TECHNOLOGIA",
       "AURA COMES BACK",
       "spiderman",
@@ -94,7 +97,7 @@
       const pin = document.getElementById("pin-input").value.trim();
       const message = document.getElementById("pin-message");
 
-      if (validPins.includes(pin)) {
+      if (pin === adminPin || memberPins.includes(pin)) {
         message.textContent = "Access granted!";
         document.getElementById("join-form").classList.add("hidden");
         document.getElementById("pin-section").classList.add("hidden");
@@ -105,15 +108,15 @@
     }
 
     function throwOutMember() {
-      const adminPin = prompt("Enter ADMIN PIN to throw out a member:");
-      if (!adminPin) return;
+      const enteredAdminPin = prompt("Enter ADMIN PIN to throw out a member:");
+      if (!enteredAdminPin) return;
 
-      if (validPins.includes(adminPin)) {
+      if (enteredAdminPin === adminPin) {
         const memberPin = prompt("Enter the PIN of the member you want to throw out:");
         if (!memberPin) return;
 
-        if (validPins.includes(memberPin)) {
-          validPins = validPins.filter(p => p !== memberPin);
+        if (memberPins.includes(memberPin)) {
+          memberPins = memberPins.filter(p => p !== memberPin);
           alert("Member with PIN '" + memberPin + "' has been thrown out! 🚪");
         } else {
           alert("Invalid member PIN. Cannot throw out.");
