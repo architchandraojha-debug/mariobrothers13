@@ -73,14 +73,15 @@
     <p><strong>Admin Notice 3:</strong> Don’t forget to bring your ideas.</p>
     <br>
     <button onclick="throwOutMember()">Throw Out Member</button>
+    <button onclick="resetMembers()">Reset Members</button>
   </div>
 
   <script>
     // Admin PIN
     const adminPin = "SUPERADMIN1234";
 
-    // Member PINs
-    let memberPins = [
+    // Load member PINs from localStorage if available, otherwise use defaults
+    let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [
       "TECHNOLOGIA",
       "AURA COMES BACK",
       "spiderman",
@@ -116,7 +117,10 @@
         if (!memberPin) return;
 
         if (memberPins.includes(memberPin)) {
+          // Remove the member’s PIN from the list
           memberPins = memberPins.filter(p => p !== memberPin);
+          // Save updated list to localStorage
+          localStorage.setItem("memberPins", JSON.stringify(memberPins));
           alert("Member with PIN '" + memberPin + "' has been thrown out! 🚪");
         } else {
           alert("Invalid member PIN. Cannot throw out.");
@@ -124,6 +128,20 @@
       } else {
         alert("Invalid ADMIN PIN. Access denied.");
       }
+    }
+
+    function resetMembers() {
+      memberPins = [
+        "TECHNOLOGIA",
+        "AURA COMES BACK",
+        "spiderman",
+        "THIS IS THE END",
+        "RADHE RADHE",
+        "LOL",
+        "DHURANDHAR"
+      ];
+      localStorage.setItem("memberPins", JSON.stringify(memberPins));
+      alert("All member PINs have been reset ✅");
     }
   </script>
 </body>
