@@ -76,6 +76,13 @@
     <button onclick="resetMembers()">Reset Members</button>
   </div>
 
+  <!-- Contact Admin Section -->
+  <div class="section hidden" id="contact-admin">
+    <h2>Contact Admin</h2>
+    <p>If you have any queries, you can contact our head captian at :
+        architchandraojha@gmail.com or call him at 3335706357</p>
+    
+
   <script>
     // Admin PIN
     const adminPin = "SUPERADMIN1234";
@@ -103,6 +110,7 @@
         document.getElementById("join-form").classList.add("hidden");
         document.getElementById("pin-section").classList.add("hidden");
         document.getElementById("notice-board").classList.remove("hidden");
+        document.getElementById("contact-admin").classList.remove("hidden");
       } else {
         message.textContent = "Incorrect PIN. Try again.";
       }
@@ -117,9 +125,7 @@
         if (!memberPin) return;
 
         if (memberPins.includes(memberPin)) {
-          // Remove the member’s PIN from the list
           memberPins = memberPins.filter(p => p !== memberPin);
-          // Save updated list to localStorage
           localStorage.setItem("memberPins", JSON.stringify(memberPins));
           alert("Member with PIN '" + memberPin + "' has been thrown out! 🚪");
         } else {
