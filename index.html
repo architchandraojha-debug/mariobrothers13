@@ -49,7 +49,7 @@
 
   <!-- Member Info -->
   <div class="section hidden" id="member-info-page">
-    <h2>Member Info Lookup</h2>
+    <h2>Admin Control Panel</h2>
     <div id="info-password-section">
       <p>Enter Admin Password:</p>
       <input type="password" id="info-admin-pass" placeholder="Admin Password">
@@ -65,18 +65,23 @@
       <p>Reset Member PIN:</p>
       <input type="text" id="reset-pin" placeholder="Enter PIN to Reset">
       <button onclick="resetMember()">Reset PIN</button>
+      <br><br>
+      <button onclick="clearAllData()">Clear All Data (Reset Site)</button>
       <div id="member-details"></div>
     </div>
   </div>
 
 <script>
   // --- Load from Local Storage or defaults ---
-  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
-  let memberDetails = JSON.parse(localStorage.getItem("memberDetails")) || {
+  let defaultPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
+  let defaultDetails = {
     "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
     "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
     "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
   };
+
+  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [...defaultPins];
+  let memberDetails = JSON.parse(localStorage.getItem("memberDetails")) || {...defaultDetails};
 
   const adminPin = "SUPERADMIN1234";
   const infoAdminPassword = "SECRET123";
@@ -139,53 +144,3 @@
         <p><strong>Birthday:</strong> ${info.birthday}</p>
         <p><strong>Class:</strong> ${info.class}</p>
         <p><strong>Roll No.:</strong> ${info.rollNo}</p>
-        <p><strong>Blood Group:</strong> ${info.bloodGroup}</p>
-      `;
-    } else {
-      detailsDiv.innerHTML = "<p>No member found with that PIN.</p>";
-    }
-  }
-
-  function throwOutMember(pinToRemove) {
-    const normalizedPin = pinToRemove.trim().toUpperCase();
-    const index = memberPins.findIndex(p => p.toUpperCase() === normalizedPin);
-    if (index !== -1) {
-      memberPins.splice(index, 1);
-      delete memberDetails[pinToRemove];
-      localStorage.setItem("memberPins", JSON.stringify(memberPins));
-      localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
-      alert(`Member with PIN "${pinToRemove}" has been permanently removed.`);
-    } else {
-      alert("No member found with that PIN.");
-    }
-  }
-
-  function resetMember() {
-    const pinToReset = document.getElementById("reset-pin").value.trim();
-    if (!pinToReset) {
-      alert("Please enter a PIN to reset.");
-      return;
-    }
-
-    if (!memberPins.includes(pinToReset)) {
-      memberPins.push(pinToReset);
-    }
-
-    if (!memberDetails[pinToReset]) {
-      memberDetails[pinToReset] = {
-        name: "Restored Member",
-        birthday: "Unknown",
-        class: "Unknown",
-        rollNo: "Unknown",
-        bloodGroup: "Unknown"
-      };
-    }
-
-    localStorage.setItem("memberPins", JSON.stringify(memberPins));
-    localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
-
-    alert(`PIN "${pinToReset}" has been reset and is valid again.`);
-  }
-</script>
-</body>
-</html>
