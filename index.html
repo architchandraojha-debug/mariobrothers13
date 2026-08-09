@@ -61,14 +61,25 @@
       <input type="text" id="member-pin" placeholder="Enter Member PIN">
       <button onclick="showMemberInfo()">Lookup</button>
       <button onclick="throwOutMember(document.getElementById('member-pin').value)">Throw Out Member</button>
+      <br><br>
+      <p>Reset Member PIN:</p>
+      <input type="text" id="reset-pin" placeholder="Enter PIN to Reset">
+      <button onclick="resetMember()">Reset PIN</button>
       <div id="member-details"></div>
     </div>
   </div>
 
 <script>
-  // --- Core working logic ---
+  // --- Load from Local Storage or defaults ---
+  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
+  let memberDetails = JSON.parse(localStorage.getItem("memberDetails")) || {
+    "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
+    "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
+    "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
+  };
+
   const adminPin = "SUPERADMIN1234";
-  const memberPins = ["TECHNOLOGIA","SHIVANSH1","UJJWAL2","SRIYAYUSH3","KRISHIV4","AVIRATH5","KIYANSH6","TRIAL"];
+  const infoAdminPassword = "SECRET123";
 
   window.onload = function() {
     if (localStorage.getItem("hasJoined") === "true") {
@@ -100,15 +111,6 @@
     alert("You have been logged out. Refresh to see Join Form again.");
     location.reload();
   }
-
-  // --- Member Info logic ---
-  const infoAdminPassword = "SECRET123";
-
-  const memberDetails = {
-    "10100": { name: "Shivansh Sharma", birthday: "17 December, 2015", class: "6D", bloodGroup: "A+" },
-    "10986": { name: "Ujjwal Prakash Das", birthday: "5 July 2012", class: "6A" , bloodGroup: "O+" },
-    "80908": { name: "Krishiv Modi", birthday: "20 January 2012", class: "6A", bloodGroup: "A+" }
-  };
 
   function openMemberInfo() {
     document.getElementById("member-info-page").classList.remove("hidden");
@@ -145,13 +147,44 @@
   }
 
   function throwOutMember(pinToRemove) {
-    const index = memberPins.indexOf(pinToRemove);
+    const normalizedPin = pinToRemove.trim().toUpperCase();
+    const index = memberPins.findIndex(p => p.toUpperCase() === normalizedPin);
     if (index !== -1) {
       memberPins.splice(index, 1);
-      alert(`Member with PIN "${pinToRemove}" has been removed.`);
+      delete memberDetails[pinToRemove];
+      localStorage.setItem("memberPins", JSON.stringify(memberPins));
+      localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
+      alert(`Member with PIN "${pinToRemove}" has been permanently removed.`);
     } else {
       alert("No member found with that PIN.");
     }
+  }
+
+  function resetMember() {
+    const pinToReset = document.getElementById("reset-pin").value.trim();
+    if (!pinToReset) {
+      alert("Please enter a PIN to reset.");
+      return;
+    }
+
+    if (!memberPins.includes(pinToReset)) {
+      memberPins.push(pinToReset);
+    }
+
+    if (!memberDetails[pinToReset]) {
+      memberDetails[pinToReset] = {
+        name: "Restored Member",
+        birthday: "Unknown",
+        class: "Unknown",
+        rollNo: "Unknown",
+        bloodGroup: "Unknown"
+      };
+    }
+
+    localStorage.setItem("memberPins", JSON.stringify(memberPins));
+    localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
+
+    alert(`PIN "${pinToReset}" has been reset and is valid again.`);
   }
 </script>
 </body>
