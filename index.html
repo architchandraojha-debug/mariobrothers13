@@ -54,16 +54,12 @@
   <!-- Member Info Section -->
   <div class="section hidden" id="member-info-page">
     <h2>Member Info Lookup</h2>
-
-    <!-- Password Protection -->
     <div id="info-password-section">
       <p>Enter Admin Password to access member info:</p>
       <input type="password" id="info-admin-pass" placeholder="Admin Password">
       <button onclick="checkInfoPassword()">Submit</button>
       <p id="info-pass-message"></p>
     </div>
-
-    <!-- Lookup Section -->
     <div class="hidden" id="lookup-section">
       <p>Enter Member PIN:</p>
       <input type="text" id="member-pin" placeholder="Enter Member PIN">
@@ -155,11 +151,4 @@
       const detailsDiv = document.getElementById("member-details");
 
       if (memberDetails[pin]) {
-        const info = memberDetails[pin];
-        detailsDiv.innerHTML = `
-          <h3>Member Details</h3>
-          <p><strong>Name:</strong> ${info.name}</p>
-          <p><strong>Birthday:</strong> ${info.birthday}</p>
-          <p><strong>Class:</strong> ${info.class}</p>
-          <p><strong>Roll No.:</strong> ${info.rollNo}</p>
-          <p><strong>Blood Group:</strong> ${info.bloodGroup
+        const info
