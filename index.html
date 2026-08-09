@@ -53,7 +53,7 @@
   <!-- Join Form Section -->
   <div class="section" id="join-form">
     <h2>Join Form</h2>
-    <!-- ✅ Your new Google Form responder link -->
+    <!-- ✅ Your Google Form responder link -->
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeF_OzGYIG5oRTMMdLHkA1r_ErD-n-nf-FbdH9hnQc92mgqbA/viewform?usp=publish-editor"></iframe>
   </div>
 
@@ -79,9 +79,16 @@
   <!-- Contact Admin Section -->
   <div class="section hidden" id="contact-admin">
     <h2>Contact Admin</h2>
-    <p>If you have any queries, you can contact our head captian at :
-        architchandraojha@gmail.com or call him at 3335706357</p>
-    
+    <p>If you have any queries, you can reach me here:</p>
+    <!-- Email option -->
+    <a href="mailto:youraddress@example.com">
+      <button>Email Admin</button>
+    </a>
+    <!-- Phone option -->
+    <a href="tel:+911234567890">
+      <button>Call Admin</button>
+    </a>
+  </div>
 
   <script>
     // Admin PIN
@@ -107,6 +114,9 @@
 
       if (pin === adminPin || memberPins.includes(pin)) {
         message.textContent = "Access granted!";
+        // Mark user as joined in localStorage
+        localStorage.setItem("hasJoined", "true");
+
         document.getElementById("join-form").classList.add("hidden");
         document.getElementById("pin-section").classList.add("hidden");
         document.getElementById("notice-board").classList.remove("hidden");
@@ -149,6 +159,13 @@
       localStorage.setItem("memberPins", JSON.stringify(memberPins));
       alert("All member PINs have been reset ✅");
     }
+
+    // On page load, check if user has already joined
+    window.onload = function() {
+      if (localStorage.getItem("hasJoined") === "true") {
+        document.getElementById("join-form").classList.add("hidden");
+      }
+    };
   </script>
 </body>
 </html>
