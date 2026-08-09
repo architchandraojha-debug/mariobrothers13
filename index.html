@@ -16,7 +16,7 @@
 <body>
   <h1>WELCOME TO MARIO BROTHERS</h1>
 
-  <!-- Join Form Section -->
+  <!-- Join Form -->
   <div class="section" id="join-form">
     <h2>Join Form</h2>
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeF_OzGYIG5oRTMMdLHkA1r_ErD-n-nf-FbdH9hnQc92mgqbA/viewform?usp=publish-editor"></iframe>
@@ -30,7 +30,7 @@
     <p id="pin-message"></p>
   </div>
 
-  <!-- Notice Board Section -->
+  <!-- Notice Board -->
   <div class="section hidden" id="notice-board">
     <h2>Group Notice Board</h2>
     <p><strong>Admin Notice 1:</strong> Welcome new members! 🎉</p>
@@ -43,7 +43,7 @@
     <button onclick="openMemberInfo()">Go to Member Info Page</button>
   </div>
 
-  <!-- Contact Admin Section -->
+  <!-- Contact Admin -->
   <div class="section hidden" id="contact-admin">
     <h2>Contact Admin</h2>
     <p>If you have any queries, you can reach me here:</p>
@@ -51,11 +51,11 @@
     <a href="tel:+911234567890"><button>Call Admin</button></a>
   </div>
 
-  <!-- Member Info Section -->
+  <!-- Member Info -->
   <div class="section hidden" id="member-info-page">
     <h2>Member Info Lookup</h2>
     <div id="info-password-section">
-      <p>Enter Admin Password to access member info:</p>
+      <p>Enter Admin Password:</p>
       <input type="password" id="info-admin-pass" placeholder="Admin Password">
       <button onclick="checkInfoPassword()">Submit</button>
       <p id="info-pass-message"></p>
@@ -68,99 +68,88 @@
     </div>
   </div>
 
-  <script>
-    // Admin PIN
-    const adminPin = "SUPERADMIN1234";
+<script>
+  const adminPin = "SUPERADMIN1234";
+  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [
+    "TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"
+  ];
 
-    // Member PINs
-    let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [
-      "TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"
-    ];
+  const memberDetails = {
+    "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
+    "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
+    "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" },
+    "THIS IS THE END": { name: "Sneha Roy", birthday: "9 September 2012", class: "6A", rollNo: "11", bloodGroup: "AB+" },
+    "RADHE RADHE": { name: "Kunal Verma", birthday: "2 February 2012", class: "6A", rollNo: "5", bloodGroup: "O-" },
+    "LOL": { name: "Meera Iyer", birthday: "15 August 2012", class: "6A", rollNo: "18", bloodGroup: "B-" },
+    "DHURANDHAR": { name: "Ravi Kumar", birthday: "30 November 2012", class: "6A", rollNo: "25", bloodGroup: "A-" }
+  };
 
-    // Member details
-    const memberDetails = {
-      "TECHNOLOGIA": { name: "ARCHIT OJHA", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
-      "AURA COMES BACK": { name: "SRIYAYUSH GHOSH", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
-      "spiderman": { name: "SHIVANSH SHARMA", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" },
-      "THIS IS THE END": { name: "UJJWAL PRAKASH DAS", birthday: "9 September 2012", class: "6A", rollNo: "11", bloodGroup: "AB+" },
-      "RADHE RADHE": { name: "KRISHIV MODI", birthday: "2 February 2012", class: "6A", rollNo: "5", bloodGroup: "O-" },
-      "LOL": { name: "AVIRATH MONDAL", birthday: "15 August 2012", class: "6A", rollNo: "18", bloodGroup: "B-" },
-      "DHURANDHAR": { name: "KIYANSH SARAYAN", birthday: "11 August 2015", class: "6B", rollNo: "25", bloodGroup: "A-" }
-    };
+  const infoAdminPassword = "SECRET123";
 
-    // Member Info password
-    const infoAdminPassword = "SECRET123";
-
-    // PIN check
-    document.getElementById("submit-pin").addEventListener("click", checkPin);
-
-    function checkPin() {
-      const pin = document.getElementById("pin-input").value.trim();
-      const message = document.getElementById("pin-message");
-
-      if (pin === adminPin || memberPins.includes(pin)) {
-        message.textContent = "Access granted!";
-        localStorage.setItem("hasJoined", "true");
-        document.getElementById("join-form").classList.add("hidden");
-        document.getElementById("pin-section").classList.add("hidden");
-        document.getElementById("notice-board").classList.remove("hidden");
-        document.getElementById("contact-admin").classList.remove("hidden");
-      } else {
-        message.textContent = "Incorrect PIN. Try again.";
-      }
+  // First-time check
+  window.onload = function() {
+    if (localStorage.getItem("hasJoined") === "true") {
+      document.getElementById("join-form").classList.add("hidden");
     }
+  };
 
-    // Throw out member
-    function throwOutMember() {
-      const enteredAdminPin = prompt("Enter ADMIN PIN to throw out a member:");
-      if (!enteredAdminPin) return;
-      if (enteredAdminPin === adminPin) {
-        const memberPin = prompt("Enter the PIN of the member you want to throw out:");
-        if (!memberPin) return;
-        if (memberPins.includes(memberPin)) {
-          memberPins = memberPins.filter(p => p !== memberPin);
-          localStorage.setItem("memberPins", JSON.stringify(memberPins));
-          alert("Member with PIN '" + memberPin + "' has been thrown out! 🚪");
-        } else { alert("Invalid member PIN."); }
-      } else { alert("Invalid ADMIN PIN."); }
+  // PIN check
+  document.getElementById("submit-pin").addEventListener("click", function() {
+    const pin = document.getElementById("pin-input").value.trim();
+    const message = document.getElementById("pin-message");
+
+    if (pin === adminPin || memberPins.includes(pin)) {
+      message.textContent = "Access granted!";
+      localStorage.setItem("hasJoined", "true");
+      document.getElementById("join-form").classList.add("hidden");
+      document.getElementById("pin-section").classList.add("hidden");
+      document.getElementById("notice-board").classList.remove("hidden");
+      document.getElementById("contact-admin").classList.remove("hidden");
+    } else {
+      message.textContent = "Incorrect PIN. Try again.";
     }
+  });
 
-    // Reset members
-    function resetMembers() {
-      memberPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"];
-      localStorage.setItem("memberPins", JSON.stringify(memberPins));
-      alert("All member PINs have been reset ✅");
+  // Member management
+  function throwOutMember() {
+    const enteredAdminPin = prompt("Enter ADMIN PIN:");
+    if (enteredAdminPin === adminPin) {
+      const memberPin = prompt("Enter member PIN to remove:");
+      if (memberPins.includes(memberPin)) {
+        memberPins = memberPins.filter(p => p !== memberPin);
+        localStorage.setItem("memberPins", JSON.stringify(memberPins));
+        alert("Member removed.");
+      } else { alert("Invalid member PIN."); }
+    } else { alert("Invalid ADMIN PIN."); }
+  }
+
+  function resetMembers() {
+    memberPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"];
+    localStorage.setItem("memberPins", JSON.stringify(memberPins));
+    alert("Members reset.");
+  }
+
+  // Member Info page
+  function openMemberInfo() {
+    document.getElementById("member-info-page").classList.remove("hidden");
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function checkInfoPassword() {
+    const pass = document.getElementById("info-admin-pass").value;
+    if (pass === infoAdminPassword) {
+      document.getElementById("info-password-section").classList.add("hidden");
+      document.getElementById("lookup-section").classList.remove("hidden");
+    } else {
+      document.getElementById("info-pass-message").textContent = "Incorrect password!";
     }
+  }
 
-    // First-time check
-    window.onload = function() {
-      if (localStorage.getItem("hasJoined") === "true") {
-        document.getElementById("join-form").classList.add("hidden");
-      }
-    };
+  function showMemberInfo() {
+    const pin = document.getElementById("member-pin").value.trim();
+    const detailsDiv = document.getElementById("member-details");
 
-    // Member Info page
-    function openMemberInfo() {
-      document.getElementById("member-info-page").classList.remove("hidden");
-      window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function checkInfoPassword() {
-      const pass = document.getElementById("info-admin-pass").value;
-      if (pass === infoAdminPassword) {
-        document.getElementById("info-password-section").classList.add("hidden");
-        document.getElementById("lookup-section").classList.remove("hidden");
-      } else {
-        document.getElementById("info-pass-message").textContent = "Incorrect password!";
-      }
-    }
-
-    function showMemberInfo() {
-      const pin = document.getElementById("member-pin").value.trim();
-      const detailsDiv = document.getElementById("member-details");
-
-      if (memberDetails[pin]) {
-        const info = memberDetails[pin];
-        detailsDiv.innerHTML = `
-          <h3>Member Details</h3>
-          <p><strong>Name:</
+    if (memberDetails[pin]) {
+      const info = memberDetails[pin];
+      detailsDiv.innerHTML = `
+        <h3>
