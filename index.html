@@ -36,6 +36,7 @@
     <p>Welcome! You are logged in ✅</p>
     <br>
     <button onclick="openMemberInfo()">Go to Member Info Page</button>
+    <button onclick="logout()">Logout</button>
   </div>
 
   <!-- Contact Admin -->
@@ -59,6 +60,7 @@
       <p>Enter Member PIN:</p>
       <input type="text" id="member-pin" placeholder="Enter Member PIN">
       <button onclick="showMemberInfo()">Lookup</button>
+      <button onclick="throwOutMember(document.getElementById('member-pin').value)">Throw Out Member</button>
       <div id="member-details"></div>
     </div>
   </div>
@@ -78,7 +80,10 @@
     const pin = document.getElementById("pin-input").value.trim();
     const msg = document.getElementById("pin-message");
 
-    if (pin === adminPin || memberPins.includes(pin)) {
+    const normalizedPin = pin.toUpperCase();
+    const normalizedMembers = memberPins.map(p => p.toUpperCase());
+
+    if (normalizedPin === adminPin.toUpperCase() || normalizedMembers.includes(normalizedPin)) {
       msg.textContent = "Access granted!";
       localStorage.setItem("hasJoined", "true");
       document.getElementById("join-form").classList.add("hidden");
@@ -88,6 +93,12 @@
     } else {
       msg.textContent = "Incorrect PIN!";
     }
+  }
+
+  function logout() {
+    localStorage.removeItem("hasJoined");
+    alert("You have been logged out. Refresh to see Join Form again.");
+    location.reload();
   }
 
   // --- Member Info logic ---
@@ -130,6 +141,16 @@
       `;
     } else {
       detailsDiv.innerHTML = "<p>No member found with that PIN.</p>";
+    }
+  }
+
+  function throwOutMember(pinToRemove) {
+    const index = memberPins.indexOf(pinToRemove);
+    if (index !== -1) {
+      memberPins.splice(index, 1);
+      alert(`Member with PIN "${pinToRemove}" has been removed.`);
+    } else {
+      alert("No member found with that PIN.");
     }
   }
 </script>
