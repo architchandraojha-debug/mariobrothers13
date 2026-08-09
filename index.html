@@ -144,3 +144,53 @@
         <p><strong>Birthday:</strong> ${info.birthday}</p>
         <p><strong>Class:</strong> ${info.class}</p>
         <p><strong>Roll No.:</strong> ${info.rollNo}</p>
+        <p><strong>Blood Group:</strong> ${info.bloodGroup}</p>
+      `;
+    } else {
+      detailsDiv.innerHTML = "<p>No member found with that PIN.</p>";
+    }
+  }
+
+  function throwOutMember(pinToRemove) {
+    const normalizedPin = pinToRemove.trim().toUpperCase();
+    const index = memberPins.findIndex(p => p.toUpperCase() === normalizedPin);
+    if (index !== -1) {
+      memberPins.splice(index, 1);
+      delete memberDetails[pinToRemove];
+      localStorage.setItem("memberPins", JSON.stringify(memberPins));
+      localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
+      alert(`Member with PIN "${pinToRemove}" has been permanently removed.`);
+    } else {
+      alert("No member found with that PIN.");
+    }
+  }
+
+  function resetMember() {
+    const pinToReset = document.getElementById("reset-pin").value.trim();
+    if (!pinToReset) {
+      alert("Please enter a PIN to reset.");
+      return;
+    }
+
+    if (!memberPins.includes(pinToReset)) {
+      memberPins.push(pinToReset);
+    }
+
+    if (!memberDetails[pinToReset]) {
+      memberDetails[pinToReset] = {
+        name: "Restored Member",
+        birthday: "Unknown",
+        class: "Unknown",
+        rollNo: "Unknown",
+        bloodGroup: "Unknown"
+      };
+    }
+
+    localStorage.setItem("memberPins", JSON.stringify(memberPins));
+    localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
+
+    alert(`PIN "${pinToReset}" has been reset and is valid again.`);
+  }
+
+  function clearAllData() {
+    if
