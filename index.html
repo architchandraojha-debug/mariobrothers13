@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <title>Mario Brothers Group Site</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; text-align: center; }
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
     h1 { background: #333; color: #fff; padding: 20px; margin: 0; font-size: 2em; }
-    .section { margin: 30px auto; padding: 20px; border: 1px solid #ccc; background: #fff; width: 60%; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .section { margin: 20px auto; padding: 20px; width: 60%; background: #fff; border: 1px solid #ccc; border-radius: 8px; }
     input { padding: 10px; margin: 10px; width: 200px; }
     button { padding: 10px 20px; cursor: pointer; }
     iframe { width: 100%; height: 500px; border: none; }
@@ -24,22 +24,17 @@
 
   <!-- PIN Section -->
   <div class="section" id="pin-section">
-    <h2>Enter PIN to Access</h2>
+    <h2>Enter PIN</h2>
     <input type="password" id="pin-input" placeholder="Enter PIN">
-    <button id="submit-pin">Submit</button>
+    <button onclick="checkPin()">Submit</button>
     <p id="pin-message"></p>
   </div>
 
   <!-- Notice Board -->
   <div class="section hidden" id="notice-board">
-    <h2>Group Notice Board</h2>
-    <p><strong>Admin Notice 1:</strong> Welcome new members! 🎉</p>
-    <p><strong>Admin Notice 2:</strong> First group meetup on Saturday!</p>
-    <p><strong>Admin Notice 3:</strong> Don’t forget to bring your ideas.</p>
+    <h2>Notice Board</h2>
+    <p>Welcome! You are logged in ✅</p>
     <br>
-    <button onclick="throwOutMember()">Throw Out Member</button>
-    <button onclick="resetMembers()">Reset Members</button>
-    <br><br>
     <button onclick="openMemberInfo()">Go to Member Info Page</button>
   </div>
 
@@ -69,67 +64,41 @@
   </div>
 
 <script>
+  // --- Core working logic ---
   const adminPin = "SUPERADMIN1234";
-  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [
-    "TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"
-  ];
+  const memberPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
 
-  const memberDetails = {
-    "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
-    "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
-    "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" },
-    "THIS IS THE END": { name: "Sneha Roy", birthday: "9 September 2012", class: "6A", rollNo: "11", bloodGroup: "AB+" },
-    "RADHE RADHE": { name: "Kunal Verma", birthday: "2 February 2012", class: "6A", rollNo: "5", bloodGroup: "O-" },
-    "LOL": { name: "Meera Iyer", birthday: "15 August 2012", class: "6A", rollNo: "18", bloodGroup: "B-" },
-    "DHURANDHAR": { name: "Ravi Kumar", birthday: "30 November 2012", class: "6A", rollNo: "25", bloodGroup: "A-" }
-  };
-
-  const infoAdminPassword = "SECRET123";
-
-  // First-time check
   window.onload = function() {
     if (localStorage.getItem("hasJoined") === "true") {
       document.getElementById("join-form").classList.add("hidden");
     }
   };
 
-  // PIN check
-  document.getElementById("submit-pin").addEventListener("click", function() {
+  function checkPin() {
     const pin = document.getElementById("pin-input").value.trim();
-    const message = document.getElementById("pin-message");
+    const msg = document.getElementById("pin-message");
 
     if (pin === adminPin || memberPins.includes(pin)) {
-      message.textContent = "Access granted!";
+      msg.textContent = "Access granted!";
       localStorage.setItem("hasJoined", "true");
       document.getElementById("join-form").classList.add("hidden");
       document.getElementById("pin-section").classList.add("hidden");
       document.getElementById("notice-board").classList.remove("hidden");
       document.getElementById("contact-admin").classList.remove("hidden");
     } else {
-      message.textContent = "Incorrect PIN. Try again.";
+      msg.textContent = "Incorrect PIN!";
     }
-  });
-
-  // Member management
-  function throwOutMember() {
-    const enteredAdminPin = prompt("Enter ADMIN PIN:");
-    if (enteredAdminPin === adminPin) {
-      const memberPin = prompt("Enter member PIN to remove:");
-      if (memberPins.includes(memberPin)) {
-        memberPins = memberPins.filter(p => p !== memberPin);
-        localStorage.setItem("memberPins", JSON.stringify(memberPins));
-        alert("Member removed.");
-      } else { alert("Invalid member PIN."); }
-    } else { alert("Invalid ADMIN PIN."); }
   }
 
-  function resetMembers() {
-    memberPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"];
-    localStorage.setItem("memberPins", JSON.stringify(memberPins));
-    alert("Members reset.");
-  }
+  // --- Member Info logic ---
+  const infoAdminPassword = "SECRET123";
 
-  // Member Info page
+  const memberDetails = {
+    "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
+    "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
+    "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
+  };
+
   function openMemberInfo() {
     document.getElementById("member-info-page").classList.remove("hidden");
     window.scrollTo(0, document.body.scrollHeight);
@@ -152,4 +121,17 @@
     if (memberDetails[pin]) {
       const info = memberDetails[pin];
       detailsDiv.innerHTML = `
-        <h3>
+        <h3>Member Details</h3>
+        <p><strong>Name:</strong> ${info.name}</p>
+        <p><strong>Birthday:</strong> ${info.birthday}</p>
+        <p><strong>Class:</strong> ${info.class}</p>
+        <p><strong>Roll No.:</strong> ${info.rollNo}</p>
+        <p><strong>Blood Group:</strong> ${info.bloodGroup}</p>
+      `;
+    } else {
+      detailsDiv.innerHTML = "<p>No member found with that PIN.</p>";
+    }
+  }
+</script>
+</body>
+</html>
