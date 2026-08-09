@@ -69,11 +69,29 @@
   </div>
 
   <script>
+    // Admin PIN
     const adminPin = "SUPERADMIN1234";
+
+    // Member PINs
     let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [
       "TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"
     ];
 
+    // Member details
+    const memberDetails = {
+      "TECHNOLOGIA": { name: "ARCHIT OJHA", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
+      "AURA COMES BACK": { name: "SRIYAYUSH GHOSH", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
+      "spiderman": { name: "SHIVANSH SHARMA", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" },
+      "THIS IS THE END": { name: "UJJWAL PRAKASH DAS", birthday: "9 September 2012", class: "6A", rollNo: "11", bloodGroup: "AB+" },
+      "RADHE RADHE": { name: "KRISHIV MODI", birthday: "2 February 2012", class: "6A", rollNo: "5", bloodGroup: "O-" },
+      "LOL": { name: "AVIRATH MONDAL", birthday: "15 August 2012", class: "6A", rollNo: "18", bloodGroup: "B-" },
+      "DHURANDHAR": { name: "KIYANSH SARAYAN", birthday: "11 August 2015", class: "6B", rollNo: "25", bloodGroup: "A-" }
+    };
+
+    // Member Info password
+    const infoAdminPassword = "SECRET123";
+
+    // PIN check
     document.getElementById("submit-pin").addEventListener("click", checkPin);
 
     function checkPin() {
@@ -92,6 +110,7 @@
       }
     }
 
+    // Throw out member
     function throwOutMember() {
       const enteredAdminPin = prompt("Enter ADMIN PIN to throw out a member:");
       if (!enteredAdminPin) return;
@@ -106,31 +125,21 @@
       } else { alert("Invalid ADMIN PIN."); }
     }
 
+    // Reset members
     function resetMembers() {
       memberPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman","THIS IS THE END","RADHE RADHE","LOL","DHURANDHAR"];
       localStorage.setItem("memberPins", JSON.stringify(memberPins));
       alert("All member PINs have been reset ✅");
     }
 
+    // First-time check
     window.onload = function() {
       if (localStorage.getItem("hasJoined") === "true") {
         document.getElementById("join-form").classList.add("hidden");
       }
     };
 
-    // Member Info Page logic
-    const infoAdminPassword = "SECRET123"; // change this
-
-    const memberDetails = {
-      "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
-      "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
-      "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" },
-      "THIS IS THE END": { name: "Sneha Roy", birthday: "9 September 2012", class: "6A", rollNo: "11", bloodGroup: "AB+" },
-      "RADHE RADHE": { name: "Kunal Verma", birthday: "2 February 2012", class: "6A", rollNo: "5", bloodGroup: "O-" },
-      "LOL": { name: "Meera Iyer", birthday: "15 August 2012", class: "6A", rollNo: "18", bloodGroup: "B-" },
-      "DHURANDHAR": { name: "Ravi Kumar", birthday: "30 November 2012", class: "6A", rollNo: "25", bloodGroup: "A-" }
-    };
-
+    // Member Info page
     function openMemberInfo() {
       document.getElementById("member-info-page").classList.remove("hidden");
       window.scrollTo(0, document.body.scrollHeight);
@@ -151,4 +160,7 @@
       const detailsDiv = document.getElementById("member-details");
 
       if (memberDetails[pin]) {
-        const info
+        const info = memberDetails[pin];
+        detailsDiv.innerHTML = `
+          <h3>Member Details</h3>
+          <p><strong>Name:</
