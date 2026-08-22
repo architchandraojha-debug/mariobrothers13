@@ -72,14 +72,15 @@
   </div>
 
 <script>
-  // --- Load from Local Storage or defaults ---
-  let defaultPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
-  let defaultDetails = {
+  // --- Default data ---
+  const defaultPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
+  const defaultDetails = {
     "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
     "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
     "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
   };
 
+  // --- Load from Local Storage or defaults ---
   let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [...defaultPins];
   let memberDetails = JSON.parse(localStorage.getItem("memberDetails")) || {...defaultDetails};
 
@@ -92,6 +93,7 @@
     }
   };
 
+  // --- PIN check ---
   function checkPin() {
     const pin = document.getElementById("pin-input").value.trim();
     const msg = document.getElementById("pin-message");
@@ -192,5 +194,4 @@
     alert(`PIN "${pinToReset}" has been reset and is valid again.`);
   }
 
-  function clearAllData() {
-    if
+  function clear
