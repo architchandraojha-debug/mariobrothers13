@@ -16,12 +16,6 @@
 <body>
   <h1>WELCOME TO MARIO BROTHERS</h1>
 
-  <!-- Join Form -->
-  <div class="section" id="join-form">
-    <h2>Join Form</h2>
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeF_OzGYIG5oRTMMdLHkA1r_ErD-n-nf-FbdH9hnQc92mgqbA/viewform?usp=publish-editor"></iframe>
-  </div>
-
   <!-- PIN Section -->
   <div class="section" id="pin-section">
     <h2>Enter PIN</h2>
@@ -35,19 +29,11 @@
     <h2>Notice Board</h2>
     <p>Welcome! You are logged in ✅</p>
     <br>
-    <button onclick="openMemberInfo()">Go to Member Info Page</button>
+    <button onclick="openMemberInfo()">Go to Admin Control Panel</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- Contact Admin -->
-  <div class="section hidden" id="contact-admin">
-    <h2>Contact Admin</h2>
-    <p>If you have any queries, you can reach me here:</p>
-    <a href="mailto:youraddress@example.com"><button>Email Admin</button></a>
-    <a href="tel:+911234567890"><button>Call Admin</button></a>
-  </div>
-
-  <!-- Member Info -->
+  <!-- Admin Control Panel -->
   <div class="section hidden" id="member-info-page">
     <h2>Admin Control Panel</h2>
     <div id="info-password-section">
@@ -80,18 +66,25 @@
     "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
   };
 
-  // --- Load from Local Storage or defaults ---
-  let memberPins = JSON.parse(localStorage.getItem("memberPins")) || [...defaultPins];
-  let memberDetails = JSON.parse(localStorage.getItem("memberDetails")) || {...defaultDetails};
+  let memberPins, memberDetails;
+
+  function loadData() {
+    try {
+      memberPins = JSON.parse(localStorage.getItem("memberPins"));
+      memberDetails = JSON.parse(localStorage.getItem("memberDetails"));
+      if (!Array.isArray(memberPins) || !memberDetails) {
+        memberPins = [...defaultPins];
+        memberDetails = {...defaultDetails};
+      }
+    } catch {
+      memberPins = [...defaultPins];
+      memberDetails = {...defaultDetails};
+    }
+  }
+  loadData();
 
   const adminPin = "SUPERADMIN1234";
   const infoAdminPassword = "SECRET123";
-
-  window.onload = function() {
-    if (localStorage.getItem("hasJoined") === "true") {
-      document.getElementById("join-form").classList.add("hidden");
-    }
-  };
 
   // --- PIN check ---
   function checkPin() {
@@ -104,10 +97,8 @@
     if (normalizedPin === adminPin.toUpperCase() || normalizedMembers.includes(normalizedPin)) {
       msg.textContent = "Access granted!";
       localStorage.setItem("hasJoined", "true");
-      document.getElementById("join-form").classList.add("hidden");
       document.getElementById("pin-section").classList.add("hidden");
       document.getElementById("notice-board").classList.remove("hidden");
-      document.getElementById("contact-admin").classList.remove("hidden");
     } else {
       msg.textContent = "Incorrect PIN!";
     }
@@ -115,7 +106,7 @@
 
   function logout() {
     localStorage.removeItem("hasJoined");
-    alert("You have been logged out. Refresh to see Join Form again.");
+    alert("You have been logged out. Refresh to see PIN section again.");
     location.reload();
   }
 
@@ -157,41 +148,4 @@
     const normalizedPin = pinToRemove.trim().toUpperCase();
     const index = memberPins.findIndex(p => p.toUpperCase() === normalizedPin);
     if (index !== -1) {
-      memberPins.splice(index, 1);
-      delete memberDetails[pinToRemove];
-      localStorage.setItem("memberPins", JSON.stringify(memberPins));
-      localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
-      alert(`Member with PIN "${pinToRemove}" has been permanently removed.`);
-    } else {
-      alert("No member found with that PIN.");
-    }
-  }
-
-  function resetMember() {
-    const pinToReset = document.getElementById("reset-pin").value.trim();
-    if (!pinToReset) {
-      alert("Please enter a PIN to reset.");
-      return;
-    }
-
-    if (!memberPins.includes(pinToReset)) {
-      memberPins.push(pinToReset);
-    }
-
-    if (!memberDetails[pinToReset]) {
-      memberDetails[pinToReset] = {
-        name: "Restored Member",
-        birthday: "Unknown",
-        class: "Unknown",
-        rollNo: "Unknown",
-        bloodGroup: "Unknown"
-      };
-    }
-
-    localStorage.setItem("memberPins", JSON.stringify(memberPins));
-    localStorage.setItem("memberDetails", JSON.stringify(memberDetails));
-
-    alert(`PIN "${pinToReset}" has been reset and is valid again.`);
-  }
-
-  function clear
+      memberPins.splice
