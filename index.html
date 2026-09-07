@@ -9,94 +9,65 @@
     .section { margin: 20px auto; padding: 20px; width: 60%; background: #fff; border: 1px solid #ccc; border-radius: 8px; }
     input { padding: 10px; margin: 10px; width: 200px; }
     button { padding: 10px 20px; cursor: pointer; }
-    iframe { width: 100%; height: 500px; border: none; }
     .hidden { display: none; }
   </style>
 </head>
 <body>
   <h1>WELCOME TO MARIO BROTHERS</h1>
-
-  <!-- PIN Section -->
-  <div class="section" id="pin-section">
-    <h2>Enter PIN</h2>
-    <input type="password" id="pin-input" placeholder="Enter PIN">
-    <button onclick="checkPin()">Submit</button>
-    <p id="pin-message"></p>
+<div class="section" id="pin-section">
+  <h2>Enter PIN</h2>
+  <input type="password" id="pin-input" placeholder="Enter PIN">
+  <button onclick="checkPin()">Submit</button>
+  <p id="pin-message"></p>
+</div>
+<div class="section hidden" id="notice-board">
+  <h2>Notice Board</h2>
+  <p>Welcome! You are logged in ✅</p>
+  <button onclick="openAdminPanel()">Open Admin Panel</button>
+  <button onclick="logout()">Logout</button>
+</div>
+<div class="section hidden" id="admin-panel">
+  <h2>Admin Control Panel</h2>
+  <div id="admin-pass-section">
+    <p>Enter Admin Password:</p>
+    <input type="password" id="admin-pass" placeholder="Admin Password">
+    <button onclick="checkAdminPassword()">Submit</button>
+    <p id="admin-pass-message"></p>
   </div>
 
-  <!-- Notice Board -->
-  <div class="section hidden" id="notice-board">
-    <h2>Notice Board</h2>
-    <p>Welcome! You are logged in ✅</p>
-    <br>
-    <button onclick="openMemberInfo()">Go to Admin Control Panel</button>
-    <button onclick="logout()">Logout</button>
+  <div class="hidden" id="admin-tools">
+    <p>Lookup Member Info:</p>
+    <input type="text" id="member-pin" placeholder="Enter Member PIN">
+    <button onclick="showMemberInfo()">Lookup</button>
+    <button onclick="throwOutMember()">Throw Out</button>
+    <br><br>
+    <p>Reset Member PIN:</p>
+    <input type="text" id="reset-pin" placeholder="Enter PIN to Reset">
+    <button onclick="resetMember()">Reset</button>
+    <br><br>
+    <button onclick="clearAllData()">Clear All Data</button>
+    <div id="member-details"></div>
   </div>
-
-  <!-- Admin Control Panel -->
-  <div class="section hidden" id="member-info-page">
-    <h2>Admin Control Panel</h2>
-    <div id="info-password-section">
-      <p>Enter Admin Password:</p>
-      <input type="password" id="info-admin-pass" placeholder="Admin Password">
-      <button onclick="checkInfoPassword()">Submit</button>
-      <p id="info-pass-message"></p>
-    </div>
-    <div class="hidden" id="lookup-section">
-      <p>Enter Member PIN:</p>
-      <input type="text" id="member-pin" placeholder="Enter Member PIN">
-      <button onclick="showMemberInfo()">Lookup</button>
-      <button onclick="throwOutMember(document.getElementById('member-pin').value)">Throw Out Member</button>
-      <br><br>
-      <p>Reset Member PIN:</p>
-      <input type="text" id="reset-pin" placeholder="Enter PIN to Reset">
-      <button onclick="resetMember()">Reset PIN</button>
-      <br><br>
-      <button onclick="clearAllData()">Clear All Data (Reset Site)</button>
-      <div id="member-details"></div>
-    </div>
-  </div>
-
+</div>
 <script>
-  // --- Default data ---
-  const defaultPins = ["TECHNOLOGIA","AURA COMES BACK","spiderman"];
-  const defaultDetails = {
+  // Data setup
+  let validPins = ["TECHNOLOGIA","AURA COMES BACK","SPIDERMAN"];
+  const adminPin = "SUPERADMIN1234";
+  const adminPassword = "SECRET123";
+
+  let memberDetails = {
     "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
     "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
-    "spiderman": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
+    "SPIDERMAN": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
   };
 
-  let memberPins, memberDetails;
-
-  function loadData() {
-    try {
-      memberPins = JSON.parse(localStorage.getItem("memberPins"));
-      memberDetails = JSON.parse(localStorage.getItem("memberDetails"));
-      if (!Array.isArray(memberPins) || !memberDetails) {
-        memberPins = [...defaultPins];
-        memberDetails = {...defaultDetails};
-      }
-    } catch {
-      memberPins = [...defaultPins];
-      memberDetails = {...defaultDetails};
-    }
-  }
-  loadData();
-
-  const adminPin = "SUPERADMIN1234";
-  const infoAdminPassword = "SECRET123";
-
-  // --- PIN check ---
+  // Functions
   function checkPin() {
-    const pin = document.getElementById("pin-input").value.trim();
+    const pin = document.getElementById("pin-input").value.trim().toUpperCase();
     const msg = document.getElementById("pin-message");
 
-    const normalizedPin = pin.toUpperCase();
-    const normalizedMembers = memberPins.map(p => p.toUpperCase());
-
-    if (normalizedPin === adminPin.toUpperCase() || normalizedMembers.includes(normalizedPin)) {
+    if (pin === adminPin || validPins.includes(pin)) {
       msg.textContent = "Access granted!";
-      localStorage.setItem("hasJoined", "true");
       document.getElementById("pin-section").classList.add("hidden");
       document.getElementById("notice-board").classList.remove("hidden");
     } else {
@@ -105,28 +76,29 @@
   }
 
   function logout() {
-    localStorage.removeItem("hasJoined");
-    alert("You have been logged out. Refresh to see PIN section again.");
-    location.reload();
+    document.getElementById("notice-board").classList.add("hidden");
+    document.getElementById("pin-section").classList.remove("hidden");
+    document.getElementById("pin-message").textContent = "";
+    document.getElementById("pin-input").value = "";
   }
 
-  function openMemberInfo() {
-    document.getElementById("member-info-page").classList.remove("hidden");
+  function openAdminPanel() {
+    document.getElementById("admin-panel").classList.remove("hidden");
     window.scrollTo(0, document.body.scrollHeight);
   }
 
-  function checkInfoPassword() {
-    const pass = document.getElementById("info-admin-pass").value;
-    if (pass === infoAdminPassword) {
-      document.getElementById("info-password-section").classList.add("hidden");
-      document.getElementById("lookup-section").classList.remove("hidden");
+  function checkAdminPassword() {
+    const pass = document.getElementById("admin-pass").value;
+    if (pass === adminPassword) {
+      document.getElementById("admin-pass-section").classList.add("hidden");
+      document.getElementById("admin-tools").classList.remove("hidden");
     } else {
-      document.getElementById("info-pass-message").textContent = "Incorrect password!";
+      document.getElementById("admin-pass-message").textContent = "Incorrect password!";
     }
   }
 
   function showMemberInfo() {
-    const pin = document.getElementById("member-pin").value.trim();
+    const pin = document.getElementById("member-pin").value.trim().toUpperCase();
     const detailsDiv = document.getElementById("member-details");
 
     if (memberDetails[pin]) {
@@ -144,8 +116,47 @@
     }
   }
 
-  function throwOutMember(pinToRemove) {
-    const normalizedPin = pinToRemove.trim().toUpperCase();
-    const index = memberPins.findIndex(p => p.toUpperCase() === normalizedPin);
-    if (index !== -1) {
-      memberPins.splice
+  function throwOutMember() {
+    const pin = document.getElementById("member-pin").value.trim().toUpperCase();
+    if (validPins.includes(pin)) {
+      validPins = validPins.filter(p => p !== pin);
+      delete memberDetails[pin];
+      alert(`Member with PIN "${pin}" has been removed.`);
+    } else {
+      alert("No member found with that PIN.");
+    }
+  }
+
+  function resetMember() {
+    const pin = document.getElementById("reset-pin").value.trim().toUpperCase();
+    if (!pin) {
+      alert("Please enter a PIN to reset.");
+      return;
+    }
+    if (!validPins.includes(pin)) {
+      validPins.push(pin);
+    }
+    if (!memberDetails[pin]) {
+      memberDetails[pin] = {
+        name: "Restored Member",
+        birthday: "Unknown",
+        class: "Unknown",
+        rollNo: "Unknown",
+        bloodGroup: "Unknown"
+      };
+    }
+    alert(`PIN "${pin}" has been reset and is valid again.`);
+  }
+
+  function clearAllData() {
+    if (confirm("Are you sure you want to reset everything?")) {
+      validPins = ["TECHNOLOGIA","AURA COMES BACK","SPIDERMAN"];
+      memberDetails = {
+        "TECHNOLOGIA": { name: "Rahul Sharma", birthday: "12 March 2012", class: "6A", rollNo: "21", bloodGroup: "B+" },
+        "AURA COMES BACK": { name: "Priya Das", birthday: "5 July 2012", class: "6A", rollNo: "14", bloodGroup: "O+" },
+        "SPIDERMAN": { name: "Arjun Singh", birthday: "20 January 2012", class: "6A", rollNo: "7", bloodGroup: "A+" }
+      };
+      alert("All data has been reset to defaults.");
+    }
+  }
+</script>
